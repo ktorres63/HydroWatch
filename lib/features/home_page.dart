@@ -1,14 +1,15 @@
 // lib/features/home/home_page.dart
 import 'package:flutter/material.dart';
-import './dashboard.dart';
-import './profile.dart';
-import './settings.dart';
+import 'dashboard/dashboard.dart';
+import 'profile.dart';
+import 'settings.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
