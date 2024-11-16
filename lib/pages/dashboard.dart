@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'sensor_detail_page.dart';  // Importa la nueva página
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class _DashboardPageState extends State<DashboardPage> {
   bool isAutomaticWateringOn = false;
   final Random random = Random();
 
-  // Initial values for sensors
+  // Valores iniciales para los sensores
   double lightLevel = 80.0;
   double soilMoisture = 40.0;
   double temperature = 25.0;
@@ -22,12 +23,12 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  // Function to simulate random changes in sensor data
+  // Función para simular cambios aleatorios en los valores de los sensores
   void updateSensorValues() {
     setState(() {
       lightLevel = random.nextDouble() * 100;
       soilMoisture = random.nextDouble() * 100;
-      temperature = 15 + random.nextDouble() * 20; // Temperature range from 15°C to 35°C
+      temperature = 15 + random.nextDouble() * 20; // Rango de temperatura de 15°C a 35°C
       waterLevel = random.nextDouble() * 100;
     });
   }
@@ -41,7 +42,7 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Automatic Watering section with toggle switch
+            // Sección de Riego Automático con interruptor
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -78,36 +79,33 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
             SizedBox(height: 16),
-            // Grid of sensor data with tap functionality
+            // Lista de sensores
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+              child: ListView(
                 children: [
-                  _buildSensorCard(
-                    icon: Icons.wb_sunny,
-                    label: 'Luz',
+                  _buildSensorListTile(
+                    name: 'Luz',
                     value: '${lightLevel.toStringAsFixed(1)}%',
-                    onTap: updateSensorValues,
+                    icon: Icons.wb_sunny,
+                    onTap: () => _navigateToDetailPage(context, 'Luz', '${lightLevel.toStringAsFixed(1)}%', Icons.wb_sunny),
                   ),
-                  _buildSensorCard(
-                    icon: Icons.grass,
-                    label: 'Humedad del suelo',
+                  _buildSensorListTile(
+                    name: 'Humedad del Suelo',
                     value: '${soilMoisture.toStringAsFixed(1)}%',
-                    onTap: updateSensorValues,
+                    icon: Icons.grass,
+                    onTap: () => _navigateToDetailPage(context, 'Humedad del Suelo', '${soilMoisture.toStringAsFixed(1)}%', Icons.grass),
                   ),
-                  _buildSensorCard(
-                    icon: Icons.thermostat,
-                    label: 'Temperatura',
+                  _buildSensorListTile(
+                    name: 'Temperatura',
                     value: '${temperature.toStringAsFixed(1)}°C',
-                    onTap: updateSensorValues,
+                    icon: Icons.thermostat,
+                    onTap: () => _navigateToDetailPage(context, 'Temperatura', '${temperature.toStringAsFixed(1)}°C', Icons.thermostat),
                   ),
-                  _buildSensorCard(
-                    icon: Icons.water,
-                    label: 'Nivel de agua',
+                  _buildSensorListTile(
+                    name: 'Nivel de Agua',
                     value: '${waterLevel.toStringAsFixed(1)}%',
-                    onTap: updateSensorValues,
+                    icon: Icons.water,
+                    onTap: () => _navigateToDetailPage(context, 'Nivel de Agua', '${waterLevel.toStringAsFixed(1)}%', Icons.water),
                   ),
                 ],
               ),
@@ -118,34 +116,27 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // Widget for each sensor card with tap functionality
-  Widget _buildSensorCard({required IconData icon, required String label, required String value, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 5,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40, color: Colors.blue),
-            SizedBox(height: 10),
-            Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            SizedBox(height: 5),
-            Text(value, style: TextStyle(fontSize: 18, color: Colors.grey[700])),
-          ],
+  // Función para navegar a la página de detalles del sensor
+  void _navigateToDetailPage(BuildContext context, String sensorName, String sensorValue, IconData sensorIcon) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SensorDetailPage(
+          sensorName: sensorName,
+          sensorValue: sensorValue,
+          sensorIcon: sensorIcon,
         ),
       ),
+    );
+  }
+
+  // Widget para cada elemento de la lista de sensores
+  Widget _buildSensorListTile({required String name, required String value, required IconData icon, required VoidCallback onTap}) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.blue),
+      title: Text(name, style: TextStyle(fontSize: 18)),
+      subtitle: Text(value, style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+      onTap: onTap,
     );
   }
 }
