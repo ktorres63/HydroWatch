@@ -41,8 +41,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.local_drink),
+            label: 'Tanque Agua',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

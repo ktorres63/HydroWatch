@@ -21,7 +21,8 @@ class TankView extends StatefulWidget {
 }
 
 class _TankViewState extends State<TankView> {
-  int? waterLevelLiters; // Nivel de agua
+  int? waterLevelLiters; // Nivel de agua actual
+  int? maxWaterLevelLiters; // Nivel máximo del tanque
   bool isLoading = true; // Indicador de carga
 
   // Función para obtener datos del API
@@ -33,6 +34,7 @@ class _TankViewState extends State<TankView> {
         final data = jsonDecode(response.body);
         setState(() {
           waterLevelLiters = data[0]['water_level_liters'];
+          maxWaterLevelLiters = data[0]['max_water_level_liters'];
           isLoading = false;
         });
       } else {
@@ -108,6 +110,15 @@ class _TankViewState extends State<TankView> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Capacidad máxima: ${maxWaterLevelLiters ?? 0} Litros',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey.shade700,
                   ),
                 ),
               ],
