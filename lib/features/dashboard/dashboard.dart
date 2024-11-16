@@ -1,83 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:hydro_watch/features/dashboard/nodeDetailScreen.dart';
+import 'package:hydro_watch/models/node.dart';
+import 'package:hydro_watch/service/api_service.dart';
 
-import 'widgets/simple_card.dart';
+class NodeListScreen extends StatelessWidget {
+  final ApiService apiService = ApiService();
 
-class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Dashboard')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Tarjeta que ocupa todo el ancho
-            Card(
-              elevation: 4.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(Icons.water_drop, size: 40, color: Colors.blue),
-                    SizedBox(width: 10), // Espacio entre icono y texto
-                    const Expanded(
-                      child: Text(
-                        'Riego Automático',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Switch(
-                      value: true, // Valor inicial
-                      onChanged: (value) {
-                        // Aquí puedes manejar el cambio de estado del Switch
-                      },
-                    ),
-                    Icon(Icons.info, color: Colors.blue),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 16), // Espacio entre la tarjeta grande y el GridView
-
-            // Cuadrícula de tarjetas pequeñas
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10.0,
-                mainAxisSpacing: 10.0,
-                children: const [
-                  CustomCard(
-                    title: 'Luz',
-                    icon: Icons.wb_sunny,
-                    subtitle: '80%',
-                  ),
-                  CustomCard(
-                    title: 'Humedad del suelo',
-                    icon: Icons.grass,
-                    subtitle: '40%',
-                  ),
-                  CustomCard(
-                    title: 'Temperatura',
-                    icon: Icons.thermostat,
-                    subtitle: '25°C',
-                  ),
-                  CustomCard(
-                    title: 'Nivel de agua',
-                    icon: Icons.water,
-                    subtitle: '60%',
-                  ),
-                ],
-              ),
-            ),
-          ],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
+        title: Text(
+          "Nodos",
+          style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      body: FutureBuilder<List<Node>>(
+        future: apiService.getNodes(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text("No hay nodos disponibles"));
+          }
+
+          final nodes = snapshot.data!;
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: nodes.length,
+            itemBuilder: (context, index) {
+              final node = nodes[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.teal[100],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16),
+                  title: Text(
+                    node.name,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 8),
+                      Text(
+                        "Cultivo: Ejemplo",
+                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        "Ubicación: Ejemplo",
+                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NodeDetailScreen(nodeId: node.nodeId),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    ),
+                    child: Text(
+                      "Detalles",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

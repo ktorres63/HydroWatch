@@ -17,8 +17,8 @@ class _HomePageState extends State<HomePage> {
 
   // Lista de páginas para el BottomNavigationBar
   final List<Widget> _pages = [
-    DashboardPage(),
-    ProfilePage(),
+    NodeListScreen(),
+    TankView(),
     SettingsPage(),
   ];
 
@@ -41,8 +41,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.local_drink),
+            label: 'Tanque Agua',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
