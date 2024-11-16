@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   // Lista de páginas para el BottomNavigationBar
   final List<Widget> _pages = [
     DashboardPage(),
-    ProfilePage(),
+    TankView(),
     SettingsPage(),
   ];
 
