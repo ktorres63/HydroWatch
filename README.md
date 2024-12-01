@@ -2,6 +2,13 @@
 
 A new Flutter project.
 
+## Note
+To use the app you need  this files:
+* android/app/google-services.json
+* lib/firebase_options.dart
+
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
