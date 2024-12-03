@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:hydro_watch/features/dashboard/detalles_node/general_card.dart';
+import 'package:hydro_watch/features/dashboard/detalles_node/humidity_card.dart';
+import 'package:hydro_watch/features/dashboard/detalles_node/light_card.dart';
 import 'package:hydro_watch/service/api_service.dart';
 import 'package:hydro_watch/models/node.dart';
 import 'package:hydro_watch/features/common/error_display.dart';
-import 'dart:async';
 
 class NodeDetail extends StatelessWidget {
   final int nodeId;
@@ -18,10 +22,9 @@ class NodeDetail extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.teal,
       ),
-      body: FutureBuilder<SensorData>(
-        future: apiService.getNodeRealTime(nodeId).first.timeout(
-          Duration(seconds: 10),
-          onTimeout: () => throw TimeoutException("Tiempo de espera agotado"),
+      body: StreamBuilder<SensorData>(
+        stream: apiService.getNodeRealTime(nodeId).handleError(
+              (error) => throw TimeoutException("Tiempo de espera agotado"),
         ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -60,94 +63,14 @@ class NodeDetail extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          node.name,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Icon(
-                          Icons.lightbulb,
-                          size: 48,
-                          color: node.foto != null && node.foto! > 50
-                              ? Colors.yellow
-                              : Colors.grey,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      "Ubicación: ${node.location}",
-                      style: TextStyle(fontSize: 18, color: Colors.black87),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      "Latitud: ${node.coordinates['lat']}",
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
-                    ),
-                    Text(
-                      "Longitud: ${node.coordinates['log']}",
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Humedad del suelo:",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          "${node.pot ?? 0}%",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.teal,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Nivel del Iluminosidad:",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          "${node.foto ?? 0}%",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.teal,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            child: Column(
+              children: [
+                GeneralCard(node: node),
+                SizedBox(height: 16),
+                HumidityCard(node: node),
+                SizedBox(height: 16),
+                LightCard(node: node),
+              ],
             ),
           );
         },
