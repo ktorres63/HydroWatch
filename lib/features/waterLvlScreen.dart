@@ -132,7 +132,11 @@ class _TankViewState extends State<TankView> {
                     return WaterLevelCard(
                       waterVolume: waterVolume,
                       maxVolume: _maxVolume,
+                      thresholds: [0.3, 0.6, 0.9], // Niveles de corte: 30%, 60%, 90%
+                      colors: [Colors.red, Colors.orange, Colors.blue, Colors.green], // Colores asociados
+
                     );
+
                   },
                 ),
             ],
