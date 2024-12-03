@@ -7,32 +7,52 @@ class SensorData {
   final String name;
   final String location;
   final Map<String, double> coordinates;
-  final int? pot1;
-  final int? pot2;
+  final int? pot;  // Solo un campo 'pot' que tomará el valor de pot1 o pot2
 
   SensorData({
     required this.foto,
     required this.name,
     required this.location,
     required this.coordinates,
-    this.pot1,
-    this.pot2,
+    this.pot,  // Este campo es el que se usará
   });
 
   // Constructor para convertir desde un mapa
   factory SensorData.fromMap(Map<dynamic, dynamic> data) {
+    // Validar pot1 o pot2, solo se tomará uno
+    int? pot;
+    if (data['pot1'] != null) {
+      pot = data['pot1'];
+    } else if (data['pot2'] != null) {
+      pot = data['pot2'];
+    }
+
+    // Verificar si 'loc' o 'log' están presentes para las coordenadas
+    Map<String, double> coordinates = {};
+    if (data['loc'] != null) {
+      coordinates = {
+        'lat': (data['loc']['lat'] ?? 0.0).toDouble(),
+        'log': (data['loc']['log'] ?? 0.0).toDouble(),
+      };
+    } else if (data['log'] != null) {
+      coordinates = {
+        'lat': (data['log']['lat'] ?? 0.0).toDouble(),
+        'log': (data['log']['log'] ?? 0.0).toDouble(),
+      };
+    }
+
     return SensorData(
       foto: data['foto'] ?? 0,
       name: data['name'] ?? 'NO ESPECIFICA',
       location: data['ubi_name'] ?? 'NO ESPECIFICA',
-      coordinates: data['loc'] != null
-          ? {
-        'lat': (data['loc']['lat'] ?? 0.0).toDouble(),
-        'log': (data['loc']['log'] ?? 0.0).toDouble(),
-      }
-          : {},
-      pot1: data['pot1'],
-      pot2: data['pot2'],
+      // coordinates: data['loc'] != null
+      //     ? {
+      //   'lat': (data['loc']['lat'] ?? 0.0).toDouble(),
+      //   'log': (data['loc']['log'] ?? 0.0).toDouble(),
+      // }
+      //     : {},
+      coordinates: coordinates, // Asignamos las coordenadas verificadas
+      pot: pot, // Solo asignamos el valor de pot1 o pot2
     );
   }
 
@@ -43,11 +63,22 @@ class SensorData {
       'name': name,
       'ubi_name': location,
       'loc': coordinates,
-      'pot1': pot1,
-      'pot2': pot2,
+      'pot': pot,  // Solo incluimos 'pot'
     };
   }
+
+  // Método para imprimir los datos de la instancia
+  void printData() {
+    print('SensorData:');
+    print('Foto: $foto');
+    print('Name: $name');
+    print('Location: $location');
+    print('Coordinates: $coordinates');
+    print('Pot: $pot'); // Solo mostramos 'pot'
+  }
 }
+
+
 
 class WaterVolume {
   final double volume;
