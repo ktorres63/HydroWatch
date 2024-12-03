@@ -52,13 +52,26 @@ class HumidityCard extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Center(
-              child: Text(
-                "${calculatePercentage(node.pot).toStringAsFixed(1)}%",
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: determineColor(node.pot),
-                ),
+              child:
+              Column(
+                  children: [
+                    Text(
+                      "${calculatePercentage(node.pot).toStringAsFixed(1)}%",
+                      style: TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        color: determineColor(node.pot),
+                      ),
+                    ),
+                    Text(
+                      "(${node.pot ?? 0})",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: determineColor(node.pot),
+                      ),
+                    ),
+                  ]
               ),
             ),
             SizedBox(height: 16),

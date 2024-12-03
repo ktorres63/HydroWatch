@@ -52,13 +52,25 @@ class LightCard extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Center(
-              child: Text(
-                "${calculatePercentage(node.foto).toStringAsFixed(1)}%",
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: determineColor(node.foto),
-                ),
+              child: Column(
+                children: [
+                  Text(
+                    "${calculatePercentage(node.foto).toStringAsFixed(1)}%",
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      color: determineColor(node.foto),
+                    ),
+                  ),
+                  Text(
+                    "(${node.foto ?? 0})",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: determineColor(node.foto),
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 16),
