@@ -19,27 +19,76 @@ class GeneralCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              node.name,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.sensors,
+                  color: Colors.blueAccent,
+                  size: 32,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    node.name,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Divider(height: 16, color: Colors.grey.shade300),
+            Row(
+              children: [
+                Icon(Icons.location_on, color: Colors.redAccent),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    "Ubicación: ${node.location}",
+                    style: TextStyle(fontSize: 18, color: Colors.black87),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.map, color: Colors.green),
+                SizedBox(width: 8),
+                Text(
+                  "Latitud: ${node.coordinates['lat']}",
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                ),
+              ],
             ),
             SizedBox(height: 8),
-            Text(
-              "Ubicación: ${node.location}",
-              style: TextStyle(fontSize: 18, color: Colors.black87),
+            Row(
+              children: [
+                Icon(Icons.map, color: Colors.green),
+                SizedBox(width: 8),
+                Text(
+                  "Longitud: ${node.coordinates['log']}",
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                ),
+              ],
             ),
-            SizedBox(height: 8),
-            Text(
-              "Latitud: ${node.coordinates['lat']}",
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-            ),
-            Text(
-              "Longitud: ${node.coordinates['log']}",
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-            ),
+            // SizedBox(height: 16),
+            // Align(
+            //   alignment: Alignment.centerRight,
+            //   child: ElevatedButton.icon(
+            //     onPressed: () {
+            //       // Acción al presionar el botón
+            //     },
+            //     icon: Icon(Icons.info_outline),
+            //     label: Text("Más detalles"),
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: Colors.blueAccent,
+            //       foregroundColor: Colors.white,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
