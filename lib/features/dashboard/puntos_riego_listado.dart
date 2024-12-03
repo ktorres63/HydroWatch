@@ -10,15 +10,16 @@ class NodeListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        // backgroundColor: Colors.white,
+        // elevation: 0,
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.black),
+        //   onPressed: () => Navigator.of(context).pop(),
+        // ),
         title: Text(
-          "Nodos",
-          style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+          "Puntos de Riego",
+          style: TextStyle(
+              color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -48,7 +49,7 @@ class NodeListScreen extends StatelessWidget {
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(16),
                   title: Text(
-                    node.name,
+                    node.name + " - " + node.location,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -60,37 +61,16 @@ class NodeListScreen extends StatelessWidget {
                     children: [
                       SizedBox(height: 8),
                       Text(
-                        "Cultivo: Ejemplo",
+                        "Cultivo: " + node.name,
                         style: TextStyle(fontSize: 16, color: Colors.black87),
                       ),
                       SizedBox(height: 4),
                       Text(
-                        "Ubicación: Ejemplo",
+                        "Ubicación: " + node.location,
                         style: TextStyle(fontSize: 16, color: Colors.black87),
                       ),
                     ],
                   ),
-                  // trailing: ElevatedButton(
-                  //   onPressed: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => NodeDetailScreen(nodeId: node.foto!!),
-                  //       ),
-                  //     );
-                  //   },
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: Colors.teal,
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(8),
-                  //     ),
-                  //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  //   ),
-                  //   child: Text(
-                  //     "Detalles",
-                  //     style: TextStyle(color: Colors.white),
-                  //   ),
-                  // ),
                 ),
               );
             },
