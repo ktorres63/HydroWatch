@@ -81,9 +81,9 @@ class ApiService {
 
     if (snapshot.exists) {
       final data = snapshot.value as Map<dynamic, dynamic>;
-      final sensorsData = data['sensors'] as Map<dynamic, dynamic>;
+      // final sensorsData = data['sensors'] as Map<dynamic, dynamic>;
 
-      return sensorsData.entries.map((entry) {
+      return data.entries.take(2).map((entry) {
         final sensorData = entry.value as Map<dynamic, dynamic>;
         return SensorData.fromMap(sensorData);
       }).toList();
@@ -113,9 +113,9 @@ class ApiService {
         throw Exception('No sensor data found');
       }
 
-      final sensorsData = data['sensors'] as Map<dynamic, dynamic>;
+      // final sensorsData = data['sensors'] as Map<dynamic, dynamic>;
 
-      return sensorsData.entries.map((entry) {
+      return data.entries.take(2).map((entry) {
         final sensorData = entry.value as Map<dynamic, dynamic>;
         return SensorData.fromMap(sensorData);
       }).toList();
