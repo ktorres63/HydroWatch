@@ -63,14 +63,16 @@ class NodeDetail extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                GeneralCard(node: node),
-                SizedBox(height: 16),
-                HumidityCard(node: node),
-                SizedBox(height: 16),
-                LightCard(node: node),
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  GeneralCard(node: node),
+                  SizedBox(height: 16),
+                  HumidityCard(node: node),
+                  SizedBox(height: 16),
+                  LightCard(node: node),
+                ],
+              ),
             ),
           );
         },
