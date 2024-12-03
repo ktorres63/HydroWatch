@@ -1,57 +1,131 @@
-// import 'package:flutter/material.dart';
-// import 'package:hydro_watch/models/node_details.dart';
-// import 'package:hydro_watch/models/statistics.dart';
-// import 'package:hydro_watch/service/api_service.dart';
-//
-//
-// class NodeDetailScreen extends StatelessWidget {
-//   final int nodeId;
-//   final ApiService apiService = ApiService();
-//
-//   NodeDetailScreen({required this.nodeId});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Detalles del Nodo")),
-//       body: FutureBuilder(
-//         future: Future.wait([
-//           apiService.getNodeDetails(nodeId),
-//           apiService.getNodeStatistics(nodeId),
-//         ]),
-//         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return Center(child: CircularProgressIndicator());
-//           } else if (snapshot.hasError) {
-//             return Center(child: Text("Error: ${snapshot.error}"));
-//           }
-//
-//           final nodeDetails = snapshot.data![0] as NodeDetails;
-//           final statistics = snapshot.data![1] as Statistics;
-//
-//           return Padding(
-//             padding: const EdgeInsets.all(16.0),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text("Cultivo: ${nodeDetails.cropType}", style: TextStyle(fontSize: 18)),
-//                 Text("Ubicación: ${nodeDetails.location}", style: TextStyle(fontSize: 16)),
-//                 SizedBox(height: 20),
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Text("Humedad: ${statistics.humidity}%", style: TextStyle(fontSize: 16)),
-//                     Text("Luz: ${statistics.lightLevel} lx", style: TextStyle(fontSize: 16)),
-//                   ],
-//                 ),
-//                 SizedBox(height: 20),
-//                 Text("Estadísticas", style: TextStyle(fontSize: 18)),
-//                 // Aquí puedes agregar un gráfico usando `charts_flutter`.
-//               ],
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
+import 'package:flutter/material.dart';
+import 'package:hydro_watch/service/api_service.dart';
+import 'package:hydro_watch/models/node.dart';
+import 'package:hydro_watch/features/common/error_display.dart';
+
+class NodeDetail extends StatelessWidget {
+  final int nodeId;
+  final ApiService apiService = ApiService();
+
+  NodeDetail({required this.nodeId, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Detalle del Punto de Riego $nodeId'),
+        centerTitle: true,
+        backgroundColor: Colors.teal,
+      ),
+      body: StreamBuilder<SensorData>(
+        stream: apiService.getNodeRealTime(nodeId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(color: Colors.teal),
+            );
+          } else if (snapshot.hasError) {
+            return ErrorDisplay(
+              title: "Error al cargar el nodo",
+              message: "No se pudo cargar la información del nodo. Intenta nuevamente.",
+              onRetry: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => NodeDetail(nodeId: nodeId),
+                  ),
+                );
+              },
+            );
+          } else if (!snapshot.hasData) {
+            return ErrorDisplay(
+              title: "Nodo no encontrado",
+              message: "No hay información disponible para este nodo.",
+              onRetry: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => NodeDetail(nodeId: nodeId),
+                  ),
+                );
+              },
+            );
+          }
+
+          final node = snapshot.data!;
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          node.name,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Icon(
+                          Icons.lightbulb,
+                          size: 48,
+                          color: node.foto != null && node.foto! > 50
+                              ? Colors.yellow
+                              : Colors.grey,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      "Ubicación: ${node.location}",
+                      style: TextStyle(fontSize: 18, color: Colors.black87),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Latitud: ${node.coordinates['lat']}",
+                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                    ),
+                    Text(
+                      "Longitud: ${node.coordinates['log']}",
+                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Humedad del suelo:",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "${node.pot ?? 0}%",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

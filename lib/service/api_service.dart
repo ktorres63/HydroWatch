@@ -163,4 +163,27 @@ class ApiService {
       return WaterVolume(volume: 0.0);  // Si no se encuentra el volumen, regresamos 0
     });
   }
+
+  // Método para obtener los datos de un nodo específico una vez
+  Future<SensorData> getNode(int nodeId) async {
+    final snapshot = await _firebaseDatabase.child('sensors/$nodeId').get();
+
+    if (snapshot.exists) {
+      final data = snapshot.value as Map<dynamic, dynamic>;
+      return SensorData.fromMap(data);
+    } else {
+      throw Exception('No data found for node $nodeId');
+    }
+  }
+
+  // Stream para obtener los datos de un nodo específico en tiempo real
+  Stream<SensorData> getNodeRealTime(int nodeId) {
+    return _firebaseDatabase.child('sensors/$nodeId').onValue.map((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>?;
+      if (data == null) {
+        throw Exception('No data found for node $nodeId');
+      }
+      return SensorData.fromMap(data);
+    });
+  }
 }
