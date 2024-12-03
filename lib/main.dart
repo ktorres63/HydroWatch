@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:hydro_watch/service/test_api_service.dart';
 import 'core/util.dart';
 import 'core/theme.dart';
 import 'features/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+
 
 
 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
 );
@@ -28,8 +33,8 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Smart Irrigation System',
-      theme: theme.light(),
-      home: LoginPage(), // Página de inicio al abrir la app
+      theme: theme.lightHighContrast(),
+      home: TestApiService(), // Página de inicio al abrir la app
     );
   }
 }
