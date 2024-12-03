@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Smart Irrigation System',
       theme: theme.lightHighContrast(),
-      home: TestApiService(), // Página de inicio al abrir la app
+      home: LoginPage(), // Página de inicio al abrir la app
     );
   }
 }
