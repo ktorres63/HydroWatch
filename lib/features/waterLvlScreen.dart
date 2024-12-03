@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:hydro_watch/features/common/error_display.dart';
 import 'package:hydro_watch/service/api_service.dart';
 
 class TankView extends StatefulWidget {
@@ -27,7 +28,7 @@ class _TankViewState extends State<TankView> {
 
   void _fetchWaterVolume() {
     _waterVolumeSubscription = _apiService.getWaterVolumeStream().listen(
-          (waterVolume) {
+      (waterVolume) {
         setState(() {
           _isLoading = false;
           _isError = false;
@@ -48,7 +49,8 @@ class _TankViewState extends State<TankView> {
         setState(() {
           _isLoading = false;
           _isError = true;
-          _errorMessage = 'El tiempo de espera se ha agotado. Intenta nuevamente.';
+          _errorMessage =
+              'El tiempo de espera se ha agotado. Intenta nuevamente.';
         });
       }
     });
@@ -78,7 +80,8 @@ class _TankViewState extends State<TankView> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, // Centrado vertical
-            crossAxisAlignment: CrossAxisAlignment.center, // Centrado horizontal
+            crossAxisAlignment:
+                CrossAxisAlignment.center, // Centrado horizontal
             children: [
               // Si está cargando, mostrar indicador de carga
               if (_isLoading)
@@ -98,30 +101,10 @@ class _TankViewState extends State<TankView> {
 
               // Si ocurrió un error
               if (_isError)
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 80,
-                      color: Colors.red,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      _errorMessage,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18, color: Colors.redAccent),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _retryFetchingData,
-                      child: const Text('Reintentar'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      ),
-                    ),
-                  ],
+                ErrorDisplay(
+                  title: "Algo salió mal",
+                  message: _errorMessage,
+                  onRetry: _retryFetchingData,
                 ),
 
               // Si se recibieron los datos correctamente
@@ -143,7 +126,8 @@ class _TankViewState extends State<TankView> {
                             Text(
                               'No se encontraron datos de nivel de agua.',
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 18, color: Colors.orange),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.orange),
                             ),
                           ],
                         ),
