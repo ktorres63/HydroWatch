@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hydro_watch/service/api_service.dart';
 import 'package:hydro_watch/models/node.dart';
 import 'package:hydro_watch/features/common/error_display.dart';
+import 'dart:async';
 
 class NodeDetail extends StatelessWidget {
   final int nodeId;
@@ -13,12 +14,15 @@ class NodeDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalle del Punto de Riego $nodeId'),
+        title: Text('Detalle del Nodo $nodeId'),
         centerTitle: true,
         backgroundColor: Colors.teal,
       ),
-      body: StreamBuilder<SensorData>(
-        stream: apiService.getNodeRealTime(nodeId),
+      body: FutureBuilder<SensorData>(
+        future: apiService.getNodeRealTime(nodeId).first.timeout(
+          Duration(seconds: 10),
+          onTimeout: () => throw TimeoutException("Tiempo de espera agotado"),
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -27,7 +31,9 @@ class NodeDetail extends StatelessWidget {
           } else if (snapshot.hasError) {
             return ErrorDisplay(
               title: "Error al cargar el nodo",
-              message: "No se pudo cargar la información del nodo. Intenta nuevamente.",
+              message: snapshot.error is TimeoutException
+                  ? "El tiempo de espera se agotó. Intenta nuevamente."
+                  : "No se pudo cargar la información del nodo. Intenta nuevamente.",
               onRetry: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
