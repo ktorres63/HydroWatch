@@ -125,6 +125,26 @@ class NodeDetail extends StatelessWidget {
                         ),
                       ],
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Nivel del Iluminosidad:",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "${node.foto ?? 0}%",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.teal,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
