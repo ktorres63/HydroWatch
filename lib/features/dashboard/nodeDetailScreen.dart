@@ -1,53 +1,78 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:hydro_watch/models/node_details.dart';
-import 'package:hydro_watch/models/statistics.dart';
+import 'package:hydro_watch/features/dashboard/detalles_node/general_card.dart';
+import 'package:hydro_watch/features/dashboard/detalles_node/humidity_card.dart';
+import 'package:hydro_watch/features/dashboard/detalles_node/light_card.dart';
 import 'package:hydro_watch/service/api_service.dart';
+import 'package:hydro_watch/models/node.dart';
+import 'package:hydro_watch/features/common/error_display.dart';
 
-
-class NodeDetailScreen extends StatelessWidget {
+class NodeDetail extends StatelessWidget {
   final int nodeId;
   final ApiService apiService = ApiService();
 
-  NodeDetailScreen({required this.nodeId});
+  NodeDetail({required this.nodeId, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Detalles del Nodo")),
-      body: FutureBuilder(
-        future: Future.wait([
-          apiService.getNodeDetails(nodeId),
-          apiService.getNodeStatistics(nodeId),
-        ]),
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+      appBar: AppBar(
+        title: Text('Detalle del Nodo $nodeId'),
+        centerTitle: true,
+        backgroundColor: Colors.teal,
+      ),
+      body: StreamBuilder<SensorData>(
+        stream: apiService.getNodeRealTime(nodeId).handleError(
+              (error) => throw TimeoutException("Tiempo de espera agotado"),
+        ),
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(color: Colors.teal),
+            );
           } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
+            return ErrorDisplay(
+              title: "Error al cargar el nodo",
+              message: snapshot.error is TimeoutException
+                  ? "El tiempo de espera se agotó. Intenta nuevamente."
+                  : "No se pudo cargar la información del nodo. Intenta nuevamente.",
+              onRetry: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => NodeDetail(nodeId: nodeId),
+                  ),
+                );
+              },
+            );
+          } else if (!snapshot.hasData) {
+            return ErrorDisplay(
+              title: "Nodo no encontrado",
+              message: "No hay información disponible para este nodo.",
+              onRetry: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => NodeDetail(nodeId: nodeId),
+                  ),
+                );
+              },
+            );
           }
 
-          final nodeDetails = snapshot.data![0] as NodeDetails;
-          final statistics = snapshot.data![1] as Statistics;
+          final node = snapshot.data!;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Cultivo: ${nodeDetails.cropType}", style: TextStyle(fontSize: 18)),
-                Text("Ubicación: ${nodeDetails.location}", style: TextStyle(fontSize: 16)),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Humedad: ${statistics.humidity}%", style: TextStyle(fontSize: 16)),
-                    Text("Luz: ${statistics.lightLevel} lx", style: TextStyle(fontSize: 16)),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Text("Estadísticas", style: TextStyle(fontSize: 18)),
-                // Aquí puedes agregar un gráfico usando `charts_flutter`.
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  GeneralCard(node: node),
+                  SizedBox(height: 16),
+                  HumidityCard(node: node),
+                  SizedBox(height: 16),
+                  LightCard(node: node),
+                ],
+              ),
             ),
           );
         },

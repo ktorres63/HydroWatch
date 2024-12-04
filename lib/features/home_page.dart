@@ -1,6 +1,6 @@
 // lib/features/home/home_page.dart
 import 'package:flutter/material.dart';
-import 'dashboard/dashboard.dart';
+import 'dashboard/puntos_riego_listado.dart';
 import 'waterLvlScreen.dart';
 import 'settings.dart';
 
@@ -9,7 +9,7 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-   State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            label: 'Puntos Riego',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.local_drink),
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Settings',
+            label: 'Configuracion',
           ),
         ],
       ),
